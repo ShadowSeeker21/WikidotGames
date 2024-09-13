@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Game</title>
+    <style>
+      canvas {
+        background: #000;
+        display: block;
+        margin: 20px auto;
+      }
+
+      button {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        font-size: 16px;
+      }
+    </style>
+</head>
+<body>
+    <div id="tetris-container"></div>
+    <button id="startBtn">Start Game</button>
+    <button id="restartBtn">Restart Game</button>
+    <button id="fullscreenBtn">Full Screen</button>
+
+    <script>
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 320;
+      canvas.height = 640;
+      document.getElementById('tetris-container').appendChild(canvas);
+
+      const row = 20;
+      const col = 10;
+      const squareSize = 32;
+      const vacant = "black"; // Empty square color
+
+      let board = [];
+
+      // Initialize empty board
+      function initializeBoard() {
+        board = [];
+        for (let r = 0; r < row; r++) {
+          board[r] = [];
+          for (let c = 0; c < col; c++) {
+            board[r][c] = vacant;
+          }
+        }
+        drawBoard();
+      }
+
+      // Draw the Tetris board
+      function drawSquare(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * squareSize, y * squareSize, squareSize, squareSize);
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(x * squareSize, y * squareSize, squareSize, squareSize);
+      }
+
+      function drawBoard() {
+        for (let r = 0; r < row; r++) {
+          for (let c = 0; c < col; c++) {
+            drawSquare(c, r, board[r][c]);
+          }
+        }
+      }
+
+      // Full-screen functionality
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          canvas.requestFullscreen();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+
+      // Game control buttons
+      document.getElementById('startBtn').addEventListener('click', () => {
+        initializeBoard();
+        // Additional logic to start the game can be placed here.
+      });
+
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        initializeBoard();
+        // Additional logic to restart the game can be placed here.
+      });
+
+      document.getElementById('fullscreenBtn').addEventListener('click', toggleFullScreen);
+
+      // Initialize the game when loaded
+      initializeBoard();
+    </script>
+</body>
+</html>
