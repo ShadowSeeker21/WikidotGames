@@ -35,6 +35,7 @@
 
         const box = 20;
         let score = 0;
+        let gameOver = false; // Track if the game is over
 
         let snake = [];
         snake[0] = { x: 9 * box, y: 10 * box };
@@ -75,28 +76,15 @@
         }
 
         function drawGame() {
-            // Update the snake's position BEFORE drawing it
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
-
-            if (direction === "LEFT") snakeX -= box;
-            if (direction === "UP") snakeY -= box;
-            if (direction === "RIGHT") snakeX += box;
-            if (direction === "DOWN") snakeY += box;
-
-            let newHead = { x: snakeX, y: snakeY };
-
-            // Check for collision BEFORE drawing the snake
-            if (
-                snakeX < 0 ||
-                snakeX >= canvas.width ||
-                snakeY < 0 ||
-                snakeY >= canvas.height ||
-                collision(newHead, snake)
-            ) {
-                clearInterval(game);
-                alert("Game Over! Your score is: " + score);
-                location.reload();
+            if (gameOver) {
+                // Show game over screen
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.font = "40px Arial";
+                ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 20);
+                ctx.font = "24px Arial";
+                ctx.fillText("Score: " + score, canvas.width / 2 - 50, canvas.height / 2 + 20);
+                return; // Stop further updates
             }
 
             // Clear the canvas for a new frame
@@ -114,6 +102,28 @@
             // Draw the food
             ctx.fillStyle = "red";
             ctx.fillRect(food.x, food.y, box, box);
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            // Update the snake's position
+            if (direction === "LEFT") snakeX -= box;
+            if (direction === "UP") snakeY -= box;
+            if (direction === "RIGHT") snakeX += box;
+            if (direction === "DOWN") snakeY += box;
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Check if the snake hits the wall or itself
+            if (
+                snakeX < 0 ||
+                snakeX >= canvas.width ||
+                snakeY < 0 ||
+                snakeY >= canvas.height ||
+                collision(newHead, snake)
+            ) {
+                gameOver = true; // Stop the game
+            }
 
             // Check if snake ate the food
             if (snakeX === food.x && snakeY === food.y) {
