@@ -36,21 +36,24 @@
         const box = 20;
         let score = 0;
         let gameOver = false; // Track if the game is over
+        let direction = null; // Direction of the snake
+        let snake = []; // Array to hold snake body
 
-        let snake = [];
+        // Initial snake position
         snake[0] = { x: 9 * box, y: 10 * box };
 
+        // Initial food position
         let food = {
             x: Math.floor(Math.random() * 19 + 1) * box,
             y: Math.floor(Math.random() * 19 + 1) * box
         };
 
-        let direction = null;
-
+        // Event listener for key presses (Arrow keys and WASD)
         document.addEventListener("keydown", changeDirection);
 
+        // Function to handle direction change
         function changeDirection(event) {
-            // Prevent the default action for arrow keys (scrolling)
+            // Prevent default scrolling behavior for arrow keys
             if ([37, 38, 39, 40, 65, 87, 68, 83].includes(event.keyCode)) {
                 event.preventDefault();
             }
@@ -68,13 +71,17 @@
             else if (event.keyCode == 83 && direction !== "UP") direction = "DOWN";    // S
         }
 
+        // Function to check for collision with self
         function collision(newHead, snake) {
-            for (let i = 0; i < snake.length; i++) {
-                if (newHead.x === snake[i].x && newHead.y === snake[i].y) return true;
+            for (let i = 1; i < snake.length; i++) { // Start at 1 to skip head
+                if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+                    return true;
+                }
             }
             return false;
         }
 
+        // Game loop that draws and updates the game
         function drawGame() {
             if (gameOver) {
                 // Show game over screen
@@ -106,7 +113,7 @@
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
 
-            // Update the snake's position
+            // Update the snake's position based on direction
             if (direction === "LEFT") snakeX -= box;
             if (direction === "UP") snakeY -= box;
             if (direction === "RIGHT") snakeX += box;
@@ -120,12 +127,12 @@
                 snakeX >= canvas.width ||
                 snakeY < 0 ||
                 snakeY >= canvas.height ||
-                collision(newHead, snake)
+                (direction && collision(newHead, snake)) // Only check for collision if movement has started
             ) {
                 gameOver = true; // Stop the game
             }
 
-            // Check if snake ate the food
+            // Check if the snake eats the food
             if (snakeX === food.x && snakeY === food.y) {
                 score++;
                 food = {
@@ -142,7 +149,28 @@
             document.getElementById("score").textContent = "Score: " + score;
         }
 
-        let game = setInterval(drawGame, 100);
+        // Restart the game when clicking on the canvas after a game over
+        canvas.addEventListener("click", function() {
+            if (gameOver) {
+                resetGame();
+            }
+        });
+
+        // Function to reset the game
+        function resetGame() {
+            gameOver = false;
+            score = 0;
+            direction = null;
+            snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box }; // Reset snake position
+            food = {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            }; // Reset food position
+        }
+
+        // Start the game loop
+        setInterval(drawGame, 100);
     </script>
 </body>
 </html>
