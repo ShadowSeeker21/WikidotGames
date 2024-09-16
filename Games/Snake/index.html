@@ -49,10 +49,22 @@
         document.addEventListener("keydown", changeDirection);
 
         function changeDirection(event) {
+            // Prevent the default action for arrow keys (scrolling)
+            if ([37, 38, 39, 40, 65, 87, 68, 83].includes(event.keyCode)) {
+                event.preventDefault();
+            }
+
+            // Arrow keys (37 = left, 38 = up, 39 = right, 40 = down)
             if (event.keyCode == 37 && direction !== "RIGHT") direction = "LEFT";
             else if (event.keyCode == 38 && direction !== "DOWN") direction = "UP";
             else if (event.keyCode == 39 && direction !== "LEFT") direction = "RIGHT";
             else if (event.keyCode == 40 && direction !== "UP") direction = "DOWN";
+
+            // WASD keys (65 = A, 87 = W, 68 = D, 83 = S)
+            else if (event.keyCode == 65 && direction !== "RIGHT") direction = "LEFT";  // A
+            else if (event.keyCode == 87 && direction !== "DOWN") direction = "UP";    // W
+            else if (event.keyCode == 68 && direction !== "LEFT") direction = "RIGHT"; // D
+            else if (event.keyCode == 83 && direction !== "UP") direction = "DOWN";    // S
         }
 
         function collision(newHead, snake) {
