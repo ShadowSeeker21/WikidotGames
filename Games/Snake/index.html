@@ -35,36 +35,54 @@
 
         const box = 20;
         let score = 0;
-        let gameOver = false; // Track if the game is over
-        let direction = null; // Direction of the snake
-        let snake = []; // Array to hold snake body
+        let gameOver = false;
+        let direction = null;
+        let snake = [];
 
         // Initial snake position
         snake[0] = { x: 9 * box, y: 10 * box };
 
-        // Initial food position
-        let food = {
-            x: Math.floor(Math.random() * 19 + 1) * box,
-            y: Math.floor(Math.random() * 19 + 1) * box
-        };
+        // Function to generate food at a valid position (not inside the snake)
+        function generateFood() {
+            let newFood;
+            let foodOnSnake;
+            do {
+                foodOnSnake = false;
+                newFood = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+
+                // Check if the food is on the snake
+                for (let i = 0; i < snake.length; i++) {
+                    if (newFood.x === snake[i].x && newFood.y === snake[i].y) {
+                        foodOnSnake = true;
+                        break;
+                    }
+                }
+            } while (foodOnSnake); // Regenerate food if it's on the snake
+
+            return newFood;
+        }
+
+        // Generate initial food position
+        let food = generateFood();
 
         // Event listener for key presses (Arrow keys and WASD)
         document.addEventListener("keydown", changeDirection);
 
         // Function to handle direction change
         function changeDirection(event) {
-            // Prevent default scrolling behavior for arrow keys
             if ([37, 38, 39, 40, 65, 87, 68, 83].includes(event.keyCode)) {
                 event.preventDefault();
             }
 
-            // Arrow keys (37 = left, 38 = up, 39 = right, 40 = down)
+            // Arrow keys and WASD controls
             if (event.keyCode == 37 && direction !== "RIGHT") direction = "LEFT";
             else if (event.keyCode == 38 && direction !== "DOWN") direction = "UP";
             else if (event.keyCode == 39 && direction !== "LEFT") direction = "RIGHT";
             else if (event.keyCode == 40 && direction !== "UP") direction = "DOWN";
 
-            // WASD keys (65 = A, 87 = W, 68 = D, 83 = S)
             else if (event.keyCode == 65 && direction !== "RIGHT") direction = "LEFT";  // A
             else if (event.keyCode == 87 && direction !== "DOWN") direction = "UP";    // W
             else if (event.keyCode == 68 && direction !== "LEFT") direction = "RIGHT"; // D
@@ -73,7 +91,7 @@
 
         // Function to check for collision with self
         function collision(newHead, snake) {
-            for (let i = 1; i < snake.length; i++) { // Start at 1 to skip head
+            for (let i = 1; i < snake.length; i++) {
                 if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
                     return true;
                 }
@@ -84,14 +102,13 @@
         // Game loop that draws and updates the game
         function drawGame() {
             if (gameOver) {
-                // Show game over screen
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = "white";
                 ctx.font = "40px Arial";
                 ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 20);
                 ctx.font = "24px Arial";
                 ctx.fillText("Score: " + score, canvas.width / 2 - 50, canvas.height / 2 + 20);
-                return; // Stop further updates
+                return;
             }
 
             // Clear the canvas for a new frame
@@ -101,7 +118,6 @@
             for (let i = 0; i < snake.length; i++) {
                 ctx.fillStyle = i === 0 ? "lime" : "white";
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
-
                 ctx.strokeStyle = "red";
                 ctx.strokeRect(snake[i].x, snake[i].y, box, box);
             }
@@ -127,20 +143,17 @@
                 snakeX >= canvas.width ||
                 snakeY < 0 ||
                 snakeY >= canvas.height ||
-                (direction && collision(newHead, snake)) // Only check for collision if movement has started
+                (direction && collision(newHead, snake))
             ) {
-                gameOver = true; // Stop the game
+                gameOver = true;
             }
 
             // Check if the snake eats the food
             if (snakeX === food.x && snakeY === food.y) {
                 score++;
-                food = {
-                    x: Math.floor(Math.random() * 19 + 1) * box,
-                    y: Math.floor(Math.random() * 19 + 1) * box
-                };
+                food = generateFood(); // Generate new food
             } else {
-                snake.pop(); // Remove the tail if not eating
+                snake.pop();
             }
 
             snake.unshift(newHead); // Add the new head to the snake
@@ -162,11 +175,8 @@
             score = 0;
             direction = null;
             snake = [];
-            snake[0] = { x: 9 * box, y: 10 * box }; // Reset snake position
-            food = {
-                x: Math.floor(Math.random() * 19 + 1) * box,
-                y: Math.floor(Math.random() * 19 + 1) * box
-            }; // Reset food position
+            snake[0] = { x: 9 * box, y: 10 * box };
+            food = generateFood(); // Generate new food
         }
 
         // Start the game loop
