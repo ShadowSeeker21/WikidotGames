@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tetris Game</title>
     <style>
-      canvas {
-        background: #000;
-        display: block;
-        margin: 20px auto;
-      }
-
-      button {
-        display: block;
-        margin: 10px auto;
-        padding: 10px;
-        font-size: 16px;
-      }
+        canvas {
+            background: #000;
+            display: block;
+            margin: 20px auto;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -26,73 +25,87 @@
     <button id="fullscreenBtn">Full Screen</button>
 
     <script>
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 320;
-      canvas.height = 640;
-      document.getElementById('tetris-container').appendChild(canvas);
+        // Initialize the canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 320;
+        canvas.height = 640;
+        document.getElementById('tetris-container').appendChild(canvas);
 
-      const row = 20;
-      const col = 10;
-      const squareSize = 32;
-      const vacant = "black"; // Empty square color
+        const row = 20;
+        const col = 10;
+        const squareSize = 32;
+        const vacant = "black"; // Empty square color
 
-      let board = [];
+        let board = [];
+        let gameInterval;
 
-      // Initialize empty board
-      function initializeBoard() {
-        board = [];
-        for (let r = 0; r < row; r++) {
-          board[r] = [];
-          for (let c = 0; c < col; c++) {
-            board[r][c] = vacant;
-          }
+        // Initialize empty board
+        function initializeBoard() {
+            board = [];
+            for (let r = 0; r < row; r++) {
+                board[r] = [];
+                for (let c = 0; c < col; c++) {
+                    board[r][c] = vacant;
+                }
+            }
+            drawBoard();
         }
-        drawBoard();
-      }
 
-      // Draw the Tetris board
-      function drawSquare(x, y, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x * squareSize, y * squareSize, squareSize, squareSize);
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(x * squareSize, y * squareSize, squareSize, squareSize);
-      }
-
-      function drawBoard() {
-        for (let r = 0; r < row; r++) {
-          for (let c = 0; c < col; c++) {
-            drawSquare(c, r, board[r][c]);
-          }
+        // Draw the Tetris board
+        function drawSquare(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * squareSize, y * squareSize, squareSize, squareSize);
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(x * squareSize, y * squareSize, squareSize, squareSize);
         }
-      }
 
-      // Full-screen functionality
-      function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-          canvas.requestFullscreen();
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
+        function drawBoard() {
+            for (let r = 0; r < row; r++) {
+                for (let c = 0; c < col; c++) {
+                    drawSquare(c, r, board[r][c]);
+                }
+            }
         }
-      }
 
-      // Game control buttons
-      document.getElementById('startBtn').addEventListener('click', () => {
+        // Example function to move or update game state
+        function gameLoop() {
+            // In an actual game, this would move pieces or update the game state.
+            console.log("Game is running...");
+            // For now, we just re-draw the board.
+            drawBoard();
+        }
+
+        // Full-screen functionality
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                canvas.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Start the game
+        document.getElementById('startBtn').addEventListener('click', () => {
+            initializeBoard();
+            // Start the game loop (every 500ms)
+            gameInterval = setInterval(gameLoop, 500);
+        });
+
+        // Restart the game
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            clearInterval(gameInterval);
+            initializeBoard();
+            gameInterval = setInterval(gameLoop, 500);
+        });
+
+        // Full-screen button
+        document.getElementById('fullscreenBtn').addEventListener('click', toggleFullScreen);
+
+        // Initialize the board when the page is loaded
         initializeBoard();
-        // Additional logic to start the game can be placed here.
-      });
-
-      document.getElementById('restartBtn').addEventListener('click', () => {
-        initializeBoard();
-        // Additional logic to restart the game can be placed here.
-      });
-
-      document.getElementById('fullscreenBtn').addEventListener('click', toggleFullScreen);
-
-      // Initialize the game when loaded
-      initializeBoard();
     </script>
 </body>
 </html>
