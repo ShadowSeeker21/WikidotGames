@@ -37,6 +37,7 @@
 <div id="controls">
     <label for="difficulty">Difficulty:</label>
     <select id="difficulty">
+        <option value="garbage">Garbage</option>
         <option value="easy">Easy</option>
         <option value="medium">Medium</option>
         <option value="hard">Hard</option>
@@ -106,7 +107,9 @@
         let mapSize = document.getElementById("mapSize").value;
 
         // Adjust snake speed based on difficulty
-        if (difficulty === "easy") {
+        if (difficulty === "garbagey") {
+            snakeSpeed = 200;
+        } else if (difficulty === "easy") {
             snakeSpeed = 150;
         } else if (difficulty === "medium") {
             snakeSpeed = 100;
