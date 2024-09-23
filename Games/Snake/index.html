@@ -61,7 +61,8 @@
     snake[0] = {x: 9 * box, y: 10 * box};
 
     let food;
-    let score = 5;
+    let score = 0;
+    let timeElapsed = 0;
     let direction;
     let gameOver = false;
     let intervalId;
@@ -140,6 +141,8 @@
     function drawGame() {
         if (gameOver) return;
 
+        timeElapsed++;
+
         // Draw checkered background
         drawCheckeredBackground();
 
@@ -162,6 +165,10 @@
         if (direction === "UP") snakeY -= box;
         if (direction === "RIGHT") snakeX += box;
         if (direction === "DOWN") snakeY += box;
+
+        if timeElapsed > 5 {
+            snake.pop();
+        } 
 
         // If the snake eats the food
         if (snakeX === food.x && snakeY === food.y) {
