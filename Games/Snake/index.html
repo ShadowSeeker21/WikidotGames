@@ -166,15 +166,11 @@
         if (direction === "RIGHT") snakeX += box;
         if (direction === "DOWN") snakeY += box;
 
-        if timeElapsed > 5 {
-            snake.pop();
-        } 
-
         // If the snake eats the food
         if (snakeX === food.x && snakeY === food.y) {
             score++;
             generateFood();
-        } else {
+        } else if (timeElapsed < 5) {
             snake.pop(); // Remove the tail
         }
 
